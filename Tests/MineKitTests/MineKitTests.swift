@@ -2,10 +2,8 @@ import XCTest
 @testable import MineKit
 
 final class MineKitTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(MineKit().text, "Hello, World!")
+    func testConnection() throws {
+        let minekit = MineKit()
+        try minekit.connect(server: ServerDetails(address: "starship.dedi.koding.dev"))
     }
 }
