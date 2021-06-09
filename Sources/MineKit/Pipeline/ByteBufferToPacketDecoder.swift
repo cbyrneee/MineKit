@@ -7,9 +7,12 @@
 
 import Foundation
 import NIO
+import Logging
 
 /// Converts a ByteBuffer instance to a Packet instance
 class ByteBufferToPacketDecoder : ByteToMessageDecoder {
+    private let logger = Logger(label: "MineKit.ByteBufferToPacketDecoder")
+
     typealias InboundOut = Packet
     private let handler = PacketReaderHandler()
     
@@ -31,14 +34,14 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
         // Due to the nature of TCP, we have to be careful when reading the packet's length, as that could also be not complete
         repeat {
             if (wrappedBuffer.buffer.readableBytes == 0) {
-                print("Not enough bytes left to parse packet length... requesting more data!")
+                logger.error("Not enough bytes left to parse packet length... requesting more data!")
                 
                 buffer.moveReaderIndex(to: startingReaderIndex)
                 return .needMoreData
             }
             
             guard let byte = wrappedBuffer.readByte() else {
-                print("Not enough bytes left to parse packet length... requesting more data!")
+                logger.error("Not enough bytes left to parse packet length... requesting more data!")
 
                 buffer.moveReaderIndex(to: startingReaderIndex)
                 return .needMoreData
@@ -57,24 +60,24 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
         // We have to check if we have the correct amount of bytes available to read via the packet length and compare it against
         // how many is in the buffer
         if (wrappedBuffer.buffer.readableBytes < length) {
-            print("Not enough bytes left to parse packet length... requesting more data!")
+            logger.error("Not enough bytes left to parse packet length... requesting more data!")
 
             buffer.moveReaderIndex(to: startingReaderIndex)
             return .needMoreData
         }
         
         let packetID = try wrappedBuffer.readVarInt()
-        print("Parsing \(packetID) with length \(length).")
+        logger.info("Parsing \(packetID) with a length of \(length) bytes.")
         
         do {
             let packet = try handler.readPacket(of: packetID, with: length, from: &wrappedBuffer)
             context.fireChannelRead(NIOAny(packet))
         } catch PacketReaderError.read(let reason) {
-            print("Failed to parse packet. Read error: \(reason).")
+            logger.error("Failed to parse packet. Read error: \(reason).")
         } catch PacketReaderError.noHandler {
-            print("Packet \(packetID) does not have a handler!")
+            logger.info("Packet \(packetID) does not have a read handler!")
         } catch {
-            print("Failed to parse \(packetID) because of an unexpected error: \(error).")
+            logger.error("Failed to parse \(packetID) because of an unexpected error: \(error).")
         }
         
         return .needMoreData

@@ -7,27 +7,33 @@
 
 import Foundation
 import NIO
+import Logging
 
 class InboundHandler : ChannelInboundHandler {
+    private let logger = Logger(label: "MineKit.Inbound")
     typealias InboundIn = Packet
     
     public func channelActive(context: ChannelHandlerContext) {
-        print("Client connected to \(context.remoteAddress!)")
+        logger.info("Client connected to server")
         context.writeAndFlush(NIOAny(HandshakePacket()), promise: nil)
         context.writeAndFlush(NIOAny(StatusRequestPacket()), promise: nil)
+    }
+    
+    public func channelInactive(context: ChannelHandlerContext) {
+        logger.info("Client disconnected from server")
     }
     
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let packet = self.unwrapInboundIn(data)
         
         if let packet = packet as? StatusResponsePacket {
-            print("Server status: \(packet.json)")
+            logger.info("Server status: \(packet.json)")
         } else {
-            print("No handler for packet \(packet)")
+            logger.warning("No handler for packet \(packet)")
         }
     }
     
     public func errorCaught(context: ChannelHandlerContext, error: Error) {
-        print("An error has been caught by InboundChannel: ", error)
+        logger.error("An error has been caught: \(error)")
     }
 }
