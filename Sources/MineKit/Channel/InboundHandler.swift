@@ -19,7 +19,12 @@ class InboundHandler : ChannelInboundHandler {
     
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let packet = self.unwrapInboundIn(data)
-        print("Handling packet \(packet)")
+        
+        if let packet = packet as? StatusResponsePacket {
+            print("Server status: \(packet.json)")
+        } else {
+            print("No handler for packet \(packet)")
+        }
     }
     
     public func errorCaught(context: ChannelHandlerContext, error: Error) {

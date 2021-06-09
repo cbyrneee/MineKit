@@ -68,7 +68,7 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
         
         do {
             let packet = try handler.readPacket(of: packetID, with: length, from: &wrappedBuffer)
-            print(packet.toString())
+            context.fireChannelRead(NIOAny(packet))
         } catch PacketReaderError.read(let reason) {
             print("Failed to parse packet. Read error: \(reason).")
         } catch PacketReaderError.noHandler {
