@@ -4,25 +4,27 @@ import Logging
 
 @testable import MineKit
 
+class ChannelHandler : ChannelInboundHandler {
+    typealias InboundIn = Packet
+    let connection: ServerConnection
+    
+    init(with connection: ServerConnection) {
+        self.connection = connection
+    }
+    
+    public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        let packet = self.unwrapInboundIn(data)
+        if let packet = packet as? StatusResponsePacket {
+            print("S -> C: \(packet) - \(packet.json)")
+            connection.channel?.close(mode: .all, promise: nil)
+        }
+    }
+}
+
 final class MineKitTests: XCTestCase {
     func testConnection() throws {
-        let handler: ConnectionHandler = {
-            class Handler : ConnectionHandlerAdapter {
-                private let logger = Logger(label: "MineKit.Tests.Handler")
-                
-                override func on(packet: Packet, connection: ChannelHandlerContext) {
-                    if let packet = packet as? SetCompressionPacket {
-                        logger.info("Compression threshold: \(packet.threshold)")
-                    } else {
-                        logger.info("Received unknown packet: \(packet)")
-                    }
-                }
-            }
-            
-            return Handler()
-        }()
-        
-        let minekit = MineKit()
-        try minekit.connect(to: ServerDetails(address: "127.0.0.1"), using: .login, with: handler)
+        let connection = try ServerConnection.createConnection(to: ServerDetails(address: "127.0.0.1"))
+        try connection.channel?.pipeline.addHandler(ChannelHandler(with: connection)).wait()
+        try connection.blockUntilDisconnect()
     }
 }

@@ -15,14 +15,12 @@ class InboundHandler : ChannelInboundHandler {
     
     private let serverDetails: ServerDetails
     private let connectionState: ConnectionState
-    private let connectionHandler: ConnectionHandler
     
     typealias InboundIn = Packet
     
-    init(serverDetails: ServerDetails, connectionState: ConnectionState, connectionHandler: ConnectionHandler) {
+    init(serverDetails: ServerDetails, connectionState: ConnectionState) {
         self.serverDetails = serverDetails
         self.connectionState = connectionState
-        self.connectionHandler = connectionHandler
     }
     
     public func channelActive(context: ChannelHandlerContext) {
@@ -53,8 +51,6 @@ class InboundHandler : ChannelInboundHandler {
             default:
                 break
         }
-        
-        self.connectionHandler.on(packet: packet, connection: context)
     }
     
     public func errorCaught(context: ChannelHandlerContext, error: Error) {
