@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WrappedBufferError : Error {
+enum BufferError : Error {
     case read(String)
     case write(String)
 }

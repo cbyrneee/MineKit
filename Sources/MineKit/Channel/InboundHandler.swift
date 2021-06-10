@@ -19,7 +19,7 @@ class InboundHandler : ChannelInboundHandler {
     
     typealias InboundIn = Packet
     
-    init (serverDetails: ServerDetails, connectionState: ConnectionState, connectionHandler: ConnectionHandler) {
+    init(serverDetails: ServerDetails, connectionState: ConnectionState, connectionHandler: ConnectionHandler) {
         self.serverDetails = serverDetails
         self.connectionState = connectionState
         self.connectionHandler = connectionHandler

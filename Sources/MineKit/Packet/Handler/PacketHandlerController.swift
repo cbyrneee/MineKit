@@ -13,7 +13,8 @@ import NIO
 class PacketHandlerController {
     private let handlers = [
         0x00: StatusResponsePacketHandler(),
-        0x01: EncryptionRequestPacketHandler()
+        0x01: EncryptionRequestPacketHandler(),
+        0x03: SetCompressionPacketHandler()
     ] as [UInt8 : PacketHandler]
     
     /// Attempts to handle a packet via its PacketHandler

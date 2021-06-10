@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 class HandshakePacket : Packet {
     var packetID: UInt8 = 0x00
@@ -18,9 +19,9 @@ class HandshakePacket : Packet {
         self.state = state
     }
     
-    func writePacket(to buffer: inout WrappedBuffer) {
+    func writePacket(to buffer: inout ByteBuffer) {
         buffer.writeVarInt(755)
-        buffer.writeString(self.serverDetails.address)
+        buffer.writeStringPrefixedWithLength(self.serverDetails.address)
         buffer.writeShort(self.serverDetails.port)
         buffer.writeVarInt(self.state.rawValue)
     }

@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import NIO
 
 class SetCompressionPacketReader : PacketReader {
     var packetID = 0x03
     
-    func toPacket(from buffer: inout WrappedBuffer) throws -> Packet {
+    func toPacket(from buffer: inout ByteBuffer) throws -> Packet {
         let threshold = try buffer.readVarInt()
         return SetCompressionPacket(threshold: threshold)
     }

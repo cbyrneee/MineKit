@@ -1,6 +1,6 @@
 //
 //  ByteBufferToPacketDecoder.swift
-//  
+//
 //
 //  Created by Conor on 09/06/2021.
 //
@@ -32,7 +32,6 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
             return .needMoreData
         }
         
-        var wrappedBuffer = WrappedBuffer(with: buffer)
         var amountRead = 0
         var length = 0
         var lastRead: Int = 0
@@ -41,14 +40,14 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
         // If we run out of readable bytes whilst we are still checking for data, we must wait for more.
         // Due to the nature of TCP, we have to be careful when reading the packet's length, as that could also be not complete
         repeat {
-            if (wrappedBuffer.buffer.readableBytes == 0) {
+            if (buffer.readableBytes == 0) {
                 logger.error("Not enough bytes left to parse packet length... requesting more data!")
                 
                 buffer.moveReaderIndex(to: startingReaderIndex)
                 return .needMoreData
             }
             
-            guard let byte = wrappedBuffer.readByte() else {
+            guard let byte = buffer.readByte() else {
                 logger.error("Not enough bytes left to parse packet length... requesting more data!")
 
                 buffer.moveReaderIndex(to: startingReaderIndex)
@@ -61,24 +60,26 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
             length = length | (value << (7 * amountRead))
             amountRead += 1
             if(amountRead > 5) {
-                throw WrappedBufferError.read("VarInt is too large!")
+                throw BufferError.read("VarInt is too large!")
             }
         } while((lastRead & 0b10000000) != 0)
         
         // We have to check if we have the correct amount of bytes available to read via the packet length and compare it against
         // how many is in the buffer
-        if (wrappedBuffer.buffer.readableBytes < length) {
-            logger.error("Not enough bytes left to parse packet length... requesting more data!")
+        if (buffer.readableBytes < length) {
+            logger.error("Expected length of \(length) but got \(buffer.readableBytes). Requesting more data!")
 
             buffer.moveReaderIndex(to: startingReaderIndex)
             return .needMoreData
         }
+
+        let positionBeforeReadPacketID = buffer.readerIndex
+        let packetID = try buffer.readVarInt()
         
-        let packetID = try wrappedBuffer.readVarInt()
         do {
-            let packet = try handler.readPacket(of: packetID, with: length, from: &wrappedBuffer)
+            let packet = try handler.readPacket(of: packetID, with: length, from: &buffer)
             
-            logger.info("Parsed \(packetID) with a length of \(length) bytes.")
+            logger.info("Parsed packet \(packet) (0x\(String(format:"%02X", packetID))) with a length of \(length) bytes. Remaining bytes in buffer: \(buffer.readableBytes)")
             context.fireChannelRead(NIOAny(packet))
             
             return .continue
@@ -90,6 +91,7 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
             logger.error("Failed to parse 0x\(String(format:"%02X", packetID)) because of an unexpected error: \(error).")
         }
         
+        buffer.moveReaderIndex(to: positionBeforeReadPacketID)
         return .needMoreData
     }
 }

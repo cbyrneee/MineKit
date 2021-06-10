@@ -18,7 +18,7 @@ public protocol Packet {
     ///
     /// - Parameters:
     ///   - buffer: the buffer to write to
-    func writePacket(to buffer: inout WrappedBuffer)
+    func writePacket(to buffer: inout ByteBuffer)
     
     /// Converts this packet into a human readable string, formatted as JSON
     ///

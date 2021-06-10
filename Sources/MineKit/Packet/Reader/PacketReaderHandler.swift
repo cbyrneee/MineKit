@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 /// The class which handles all the packet readers
 /// When adding a new packet reader, you must add it to the `readers` dictionary
@@ -23,7 +24,7 @@ class PacketReaderHandler {
     ///   - length: the length of the packet
     ///   - buffer: the buffer containing the packet's data
     /// - Returns: An instance of the decoded packet, with all neccessary data parsed
-    func readPacket(of id: Int, with length: Int, from buffer: inout WrappedBuffer) throws -> Packet {
+    func readPacket(of id: Int, with length: Int, from buffer: inout ByteBuffer) throws -> Packet {
         guard let reader = readers[id] else {
             throw PacketReaderError.noHandler
         }

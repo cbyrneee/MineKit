@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 class EncryptionRequestPacket : Packet {
     var packetID: UInt8 = 0x01
@@ -18,7 +19,7 @@ class EncryptionRequestPacket : Packet {
         self.verifyToken = verifyToken
     }
     
-    func writePacket(to buffer: inout WrappedBuffer) {
+    func writePacket(to buffer: inout ByteBuffer) {
         // NO-OP
     }
     

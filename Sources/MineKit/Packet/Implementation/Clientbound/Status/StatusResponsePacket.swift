@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 class StatusResponsePacket : Packet {
     var packetID: UInt8 = 0x00
@@ -15,7 +16,7 @@ class StatusResponsePacket : Packet {
         self.json = json
     }
     
-    func writePacket(to buffer: inout WrappedBuffer) {
+    func writePacket(to buffer: inout ByteBuffer) {
         // NO-OP
     }
     

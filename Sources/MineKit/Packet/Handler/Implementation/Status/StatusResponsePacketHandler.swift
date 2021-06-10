@@ -17,7 +17,7 @@ class StatusResponsePacketHandler : PacketHandler {
         guard let packet = packet as? StatusResponsePacket else {
             return .error("I have no clue what happened here, this really should not happen...")
         }
-        
+                
         logger.info("Packet JSON: \(packet.json)")
         return .success
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 class SetCompressionPacket : Packet {
     var packetID: UInt8 = 0x03
@@ -16,7 +17,7 @@ class SetCompressionPacket : Packet {
         self.threshold = threshold
     }
     
-    func writePacket(to buffer: inout WrappedBuffer) {
+    func writePacket(to buffer: inout ByteBuffer) {
         // NO-OP
     }
     

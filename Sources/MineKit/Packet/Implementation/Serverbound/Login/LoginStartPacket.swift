@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 class LoginStartPacket : Packet {
     var packetID: UInt8 = 0x00
@@ -16,8 +17,8 @@ class LoginStartPacket : Packet {
         self.username = username
     }
     
-    func writePacket(to buffer: inout WrappedBuffer) {
-        buffer.writeString(self.username)
+    func writePacket(to buffer: inout ByteBuffer) {
+        buffer.writeStringPrefixedWithLength(self.username)
     }
     
     func toString() -> String {

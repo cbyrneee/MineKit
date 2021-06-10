@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIO
 
 /// The protocol which all packet readers should implement
 protocol PacketReader {
@@ -13,8 +14,8 @@ protocol PacketReader {
     var packetID: Int { get }
     
     /// The reader should read from this buffer and return a Packet instance
-    /// If the packet is invalid, or any other error occurs while parsing this packet, a WrappedBuffer exception should be thrown
+    /// If the packet is invalid, or any other error occurs while parsing this packet, a BufferError should be thrown
     /// - Parameters:
     ///   - buffer: the buffer containing the packet's data
-    func toPacket(from buffer: inout WrappedBuffer) throws -> Packet
+    func toPacket(from buffer: inout ByteBuffer) throws -> Packet
 }

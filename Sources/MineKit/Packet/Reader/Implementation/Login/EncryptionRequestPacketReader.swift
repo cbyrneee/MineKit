@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import NIO
 
 class EncryptionRequestPacketReader : PacketReader {
     var packetID: Int = 0x01
     
-    func toPacket(from buffer: inout WrappedBuffer) throws -> Packet {
+    func toPacket(from buffer: inout ByteBuffer) throws -> Packet {
         // The encryption request packet contains a string of length 20 which appears to be empty
         let _ = try buffer.readString(ofLength: 20)
 
