@@ -14,10 +14,7 @@ import Logging
 public struct MineKit {
     private let logger = Logger(label: "MineKit")
     private var context: ChannelHandlerContext? = nil
-    
-    private let inboundHandler = InboundHandler()
-    private let outboundHandler = OutboundHandler()
-    
+
     private let packetEncoder = PacketToByteBufferEncoder()
     private let packetDecoder = ByteBufferToPacketDecoder()
     
@@ -25,7 +22,7 @@ public struct MineKit {
     }
     
     /// Connects to a Minecraft Server with the provided [ServerDetails] instance.
-    func connect(server: ServerDetails) throws {
+    func connect(to server: ServerDetails) throws {
         let eventloopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let bootstrap = ClientBootstrap(group: eventloopGroup)
             .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
@@ -33,7 +30,7 @@ public struct MineKit {
                 channel.pipeline.addHandlers(
                     ByteToMessageHandler(packetDecoder),
                     MessageToByteHandler(packetEncoder),
-                    inboundHandler
+                    InboundHandler(serverDetails: server)
                 )
             }
         defer {

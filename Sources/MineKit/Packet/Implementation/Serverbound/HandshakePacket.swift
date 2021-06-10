@@ -10,10 +10,16 @@ import Foundation
 class HandshakePacket : Packet {
     var packetID: UInt8 = 0x00
     
+    private let serverDetails: ServerDetails
+    
+    init (using serverDetails: ServerDetails) {
+        self.serverDetails = serverDetails
+    }
+    
     func writePacket(to buffer: inout WrappedBuffer) {
         buffer.writeVarInt(755)
-        buffer.writeString("starship.dedi.koding.dev")
-        buffer.writeShort(25565)
+        buffer.writeString(self.serverDetails.address)
+        buffer.writeShort(self.serverDetails.port)
         buffer.writeVarInt(1)
     }
     

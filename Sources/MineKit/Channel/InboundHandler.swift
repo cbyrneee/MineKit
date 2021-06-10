@@ -11,11 +11,17 @@ import Logging
 
 class InboundHandler : ChannelInboundHandler {
     private let logger = Logger(label: "MineKit.Inbound")
+    
+    private let serverDetails: ServerDetails
     typealias InboundIn = Packet
+    
+    init (serverDetails: ServerDetails) {
+        self.serverDetails = serverDetails
+    }
     
     public func channelActive(context: ChannelHandlerContext) {
         logger.info("Client connected to server")
-        context.writeAndFlush(NIOAny(HandshakePacket()), promise: nil)
+        context.writeAndFlush(NIOAny(HandshakePacket(using: self.serverDetails)), promise: nil)
         context.writeAndFlush(NIOAny(StatusRequestPacket()), promise: nil)
     }
     

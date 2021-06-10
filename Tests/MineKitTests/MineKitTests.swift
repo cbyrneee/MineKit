@@ -4,6 +4,6 @@ import XCTest
 final class MineKitTests: XCTestCase {
     func testConnection() throws {
         let minekit = MineKit()
-        try minekit.connect(server: ServerDetails(address: "starship.dedi.koding.dev"))
+        try minekit.connect(to: ServerDetails(address: "127.0.0.1"))
     }
 }
