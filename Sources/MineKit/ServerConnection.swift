@@ -33,6 +33,10 @@ public class ServerConnection : ChannelInboundHandler {
         try channel?.closeFuture.wait()
     }
     
+    public func addHandlerToPipeline(_ handler: ChannelHandler) throws {
+        try channel?.pipeline.addHandler(handler).wait()
+    }
+    
     static func createConnection(to server: ServerDetails) throws -> ServerConnection {
         let instance = ServerConnection(to: server)
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)

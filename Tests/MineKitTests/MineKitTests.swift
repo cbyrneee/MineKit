@@ -21,7 +21,7 @@ class ChannelHandler : ConnectionChannelHandler {
 final class MineKitTests: XCTestCase {
     func testConnection() throws {
         let connection = try ServerConnection.createConnection(to: ServerDetails(address: "127.0.0.1"))
-        try connection.channel?.pipeline.addHandler(ChannelHandler(with: connection)).wait()
+        try connection.addHandlerToPipeline(ChannelHandler(with: connection))
         try connection.blockUntilDisconnect()
     }
 }
