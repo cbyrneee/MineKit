@@ -12,18 +12,27 @@ import Logging
 class InboundHandler : ChannelInboundHandler {
     private let logger = Logger(label: "MineKit.Inbound")
     private let controller = PacketHandlerController()
+    
     private let serverDetails: ServerDetails
+    private let connectionState: ConnectionState
     
     typealias InboundIn = Packet
     
-    init (serverDetails: ServerDetails) {
+    init (serverDetails: ServerDetails, connectionState: ConnectionState) {
         self.serverDetails = serverDetails
+        self.connectionState = connectionState
     }
     
     public func channelActive(context: ChannelHandlerContext) {
         logger.info("Client connected to server")
+        
         context.writeAndFlush(NIOAny(HandshakePacket(using: self.serverDetails)), promise: nil)
-        context.writeAndFlush(NIOAny(StatusRequestPacket()), promise: nil)
+        
+        if (connectionState == .status) {
+            context.writeAndFlush(NIOAny(StatusRequestPacket()), promise: nil)
+        } else if (connectionState == .login) {
+            // TODO: Implement login
+        }
     }
     
     public func channelInactive(context: ChannelHandlerContext) {

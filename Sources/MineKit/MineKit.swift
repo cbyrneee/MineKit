@@ -22,7 +22,7 @@ public struct MineKit {
     }
     
     /// Connects to a Minecraft Server with the provided [ServerDetails] instance.
-    func connect(to server: ServerDetails) throws {
+    func connect(to server: ServerDetails, using state: ConnectionState) throws {
         let eventloopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let bootstrap = ClientBootstrap(group: eventloopGroup)
             .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
@@ -30,7 +30,7 @@ public struct MineKit {
                 channel.pipeline.addHandlers(
                     ByteToMessageHandler(packetDecoder),
                     MessageToByteHandler(packetEncoder),
-                    InboundHandler(serverDetails: server)
+                    InboundHandler(serverDetails: server, connectionState: state)
                 )
             }
         defer {

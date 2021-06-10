@@ -7,11 +7,15 @@
 
 import Foundation
 import NIO
+import Logging
 
 class PacketToByteBufferEncoder : MessageToByteEncoder {
+    private let logger = Logger(label: "MineKit.PacketToByteBufferEncoder")
     typealias OutboundIn = Packet
     
     func encode(data: Packet, out: inout ByteBuffer) throws {
+        logger.info("Encoding packet \(data) with id \(data.packetID)")
+        
         // First, we must write the identifier of the packet to the buffer
         out.writeVarInt(Int(data.packetID))
         
