@@ -11,6 +11,7 @@ import NIO
 enum PacketHandlerResponse {
     case success
     case error(String)
+    case ignored
 }
 
 /// The protocol which all packet handlers should implement

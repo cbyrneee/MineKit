@@ -75,17 +75,19 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
         }
         
         let packetID = try wrappedBuffer.readVarInt()
-        logger.info("Parsing \(packetID) with a length of \(length) bytes.")
-        
         do {
             let packet = try handler.readPacket(of: packetID, with: length, from: &wrappedBuffer)
+            
+            logger.info("Parsed \(packetID) with a length of \(length) bytes.")
             context.fireChannelRead(NIOAny(packet))
+            
+            return .continue
         } catch PacketReaderError.read(let reason) {
             logger.error("Failed to parse packet. Read error: \(reason).")
         } catch PacketReaderError.noHandler {
-            logger.info("Packet \(packetID) does not have a read handler!")
+            logger.info("Packet 0x\(String(format:"%02X", packetID)) of length \(length) does not have a read handler!")
         } catch {
-            logger.error("Failed to parse \(packetID) because of an unexpected error: \(error).")
+            logger.error("Failed to parse 0x\(String(format:"%02X", packetID)) because of an unexpected error: \(error).")
         }
         
         return .needMoreData

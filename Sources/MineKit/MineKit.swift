@@ -23,7 +23,7 @@ public struct MineKit {
     /// - Parameters:
     ///   - server: the details of the server (hostname and port)
     ///   - state: the state you would like to initially connect with (status or login)
-    func connect(to server: ServerDetails, using state: ConnectionState) throws {
+    func connect(to server: ServerDetails, using state: ConnectionState, with handler: ConnectionHandler) throws {
         let eventloopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let bootstrap = ClientBootstrap(group: eventloopGroup)
             .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
@@ -31,7 +31,7 @@ public struct MineKit {
                 channel.pipeline.addHandlers(
                     ByteToMessageHandler(packetDecoder),
                     MessageToByteHandler(packetEncoder),
-                    InboundHandler(serverDetails: server, connectionState: state)
+                    InboundHandler(serverDetails: server, connectionState: state, connectionHandler: handler)
                 )
             }
         defer {

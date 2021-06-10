@@ -23,7 +23,7 @@ class PacketHandlerController {
     /// - Returns: If the packet has been handled successfully, `.success` will be returned, otherwise `.error` will be returned along with a reason.
     func handle(with context: ChannelHandlerContext, and packet: Packet) -> PacketHandlerResponse {
         guard let handler = handlers[packet.packetID] else {
-            return .error("No handler available for \(packet) (\(packet.packetID))")
+            return .ignored
         }
         
         return handler.handle(with: context, and: packet)

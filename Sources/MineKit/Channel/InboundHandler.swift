@@ -15,12 +15,14 @@ class InboundHandler : ChannelInboundHandler {
     
     private let serverDetails: ServerDetails
     private let connectionState: ConnectionState
+    private let connectionHandler: ConnectionHandler
     
     typealias InboundIn = Packet
     
-    init (serverDetails: ServerDetails, connectionState: ConnectionState) {
+    init (serverDetails: ServerDetails, connectionState: ConnectionState, connectionHandler: ConnectionHandler) {
         self.serverDetails = serverDetails
         self.connectionState = connectionState
+        self.connectionHandler = connectionHandler
     }
     
     public func channelActive(context: ChannelHandlerContext) {
@@ -45,10 +47,14 @@ class InboundHandler : ChannelInboundHandler {
         
         switch result {
             case .success:
-                logger.info("Successfully handled packet \(packet) of id \(packet.packetID)")
+                logger.info("Successfully internally handled packet \(packet) of id \(packet.packetID)")
             case .error(let error):
-                logger.error("Failed to handle packet \(packet) of id \(packet.packetID): \(error)")
+                logger.error("Failed to internally handle packet \(packet) of id \(packet.packetID): \(error)")
+            default:
+                break
         }
+        
+        self.connectionHandler.on(packet: packet, connection: context)
     }
     
     public func errorCaught(context: ChannelHandlerContext, error: Error) {

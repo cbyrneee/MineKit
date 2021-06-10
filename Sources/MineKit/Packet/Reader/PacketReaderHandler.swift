@@ -12,7 +12,8 @@ import Foundation
 class PacketReaderHandler {
     let readers = [
         0x00: StatusResponsePacketReader(),
-        0x01: EncryptionRequestPacketReader()
+        0x01: EncryptionRequestPacketReader(),
+        0x03: SetCompressionPacketReader()
     ] as [Int : PacketReader]
     
     /// Attempts to convert a buffer to a packet by calling the assigned reader for that packet
