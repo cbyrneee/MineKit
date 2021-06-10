@@ -104,6 +104,15 @@ public struct WrappedBuffer {
         return self.buffer.readInteger(endianness: .big, as: UInt8.self)
     }
     
+    public mutating func readBytes(length: Int) -> [UInt8]? {
+        return self.buffer.readBytes(length: length)
+    }
+    
+    public mutating func readBytesPrefixedWithLength() throws -> [UInt8]? {
+        let length = try self.readVarInt()
+        return self.readBytes(length: length)
+    }
+    
     public mutating func readSignedByte() -> Int8? {
         return self.buffer.readInteger(endianness: .big, as: Int8.self)
     }

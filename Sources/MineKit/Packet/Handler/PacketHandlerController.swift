@@ -10,7 +10,8 @@ import NIO
 
 class PacketHandlerController {
     private let packetHandlers = [
-        0x00: StatusResponsePacketHandler()
+        0x00: StatusResponsePacketHandler(),
+        0x01: EncryptionRequestPacketHandler()
     ] as [UInt8 : PacketHandler]
     
     func handle(with context: ChannelHandlerContext, and packet: Packet) -> PacketHandlerResponse {

@@ -8,7 +8,10 @@
 import Foundation
 
 class PacketReaderHandler {
-    let readers = [0x00: StatusResponsePacketReader()] as [Int : PacketReader]
+    let readers = [
+        0x00: StatusResponsePacketReader(),
+        0x01: EncryptionRequestPacketReader()
+    ] as [Int : PacketReader]
     
     func readPacket(of id: Int, with length: Int, from buffer: inout WrappedBuffer) throws -> Packet {
         guard let reader = readers[id] else {
