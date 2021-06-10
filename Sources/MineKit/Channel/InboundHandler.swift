@@ -44,10 +44,10 @@ class InboundHandler : ChannelInboundHandler {
         let result = controller.handle(with: context, and: packet)
         
         switch result {
-        case .success:
-            logger.info("Successfully handled packet \(packet) of id \(packet.packetID)")
-        case .error(let error):
-            logger.error("Failed to handle packet \(packet) of id \(packet.packetID): \(error)")
+            case .success:
+                logger.info("Successfully handled packet \(packet) of id \(packet.packetID)")
+            case .error(let error):
+                logger.error("Failed to handle packet \(packet) of id \(packet.packetID): \(error)")
         }
     }
     
