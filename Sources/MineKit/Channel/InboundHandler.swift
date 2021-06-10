@@ -11,8 +11,9 @@ import Logging
 
 class InboundHandler : ChannelInboundHandler {
     private let logger = Logger(label: "MineKit.Inbound")
-    
+    private let controller = PacketHandlerController()
     private let serverDetails: ServerDetails
+    
     typealias InboundIn = Packet
     
     init (serverDetails: ServerDetails) {
@@ -31,11 +32,13 @@ class InboundHandler : ChannelInboundHandler {
     
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let packet = self.unwrapInboundIn(data)
+        let result = controller.handle(with: context, and: packet)
         
-        if let packet = packet as? StatusResponsePacket {
-            logger.info("Server status: \(packet.json)")
-        } else {
-            logger.warning("No handler for packet \(packet)")
+        switch result {
+        case .success:
+            logger.info("Successfully handled packet \(packet) of id \(packet.packetID)")
+        case .error(let error):
+            logger.error("Failed to handle packet \(packet) of id \(packet.packetID): \(error)")
         }
     }
     
