@@ -1,3 +1,5 @@
 # MineKit
 
-A description of this package.
+A minecraft protocol wrapper written in Swift
+
+**More information coming soon!**
