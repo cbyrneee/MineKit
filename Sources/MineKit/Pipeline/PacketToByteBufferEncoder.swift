@@ -13,6 +13,10 @@ class PacketToByteBufferEncoder : MessageToByteEncoder {
     private let logger = Logger(label: "MineKit.PacketToByteBufferEncoder")
     typealias OutboundIn = Packet
     
+    /// Converts a packet instance to a byte buffer
+    /// - Parameters:
+    ///   - data: the packet to encode
+    ///   - out: the buffer to write to
     func encode(data: Packet, out: inout ByteBuffer) throws {
         logger.info("Encoding packet \(data) with id \(data.packetID)")
         

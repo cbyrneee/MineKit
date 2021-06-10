@@ -16,6 +16,14 @@ class ByteBufferToPacketDecoder : ByteToMessageDecoder {
 
     typealias InboundOut = Packet
     
+    /// Converts a byte buffer to a packet
+    /// This implementation carefully checks the data we are receiving vs the packet length. We also make sure that we read the packet length correctly by requesting more data if we run out of bytes.
+    /// If the buffer's readable bytes is less than the packet length, we will not decode the packet any further and the reader index is reset to what it was at earlier in the decoding process.
+    ///
+    /// - Parameters:
+    ///   - context: the channel context
+    ///   - buffer: the buffer to read from
+    /// - Returns: a DecodingState, if we need more data to parse this packet, .needMoreData will be returned
     func decode(context: ChannelHandlerContext, buffer: inout ByteBuffer) throws -> DecodingState {
         let startingReaderIndex = buffer.readerIndex
         

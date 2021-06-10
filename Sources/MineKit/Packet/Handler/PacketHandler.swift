@@ -20,5 +20,9 @@ protocol PacketHandler {
     
     /// Called from InboundHandler when a packet is ready to be handled
     /// This method should not throw any exceptions, and if one does occur, you can return PacketHandlerResponse.error
+    /// - Parameters:
+    ///   - context: the channel context
+    ///   - packet: the packet to handle
+    /// - Returns: If the packet has been handled successfully, `.success` will be returned, otherwise `.error` will be returned along with a reason.
     func handle(with context: ChannelHandlerContext, and packet: Packet) -> PacketHandlerResponse
 }

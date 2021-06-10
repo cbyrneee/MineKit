@@ -9,8 +9,6 @@ import NIO
 import Logging
 
 /// The main class for MineKit
-///
-/// Documentation coming soon
 public struct MineKit {
     private let logger = Logger(label: "MineKit")
     private var context: ChannelHandlerContext? = nil
@@ -21,7 +19,10 @@ public struct MineKit {
     public init() {
     }
     
-    /// Connects to a Minecraft Server with the provided [ServerDetails] instance.
+    /// Connects to a server given its details and the state you would like to initialise with
+    /// - Parameters:
+    ///   - server: the details of the server (hostname and port)
+    ///   - state: the state you would like to initially connect with (status or login)
     func connect(to server: ServerDetails, using state: ConnectionState) throws {
         let eventloopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let bootstrap = ClientBootstrap(group: eventloopGroup)
