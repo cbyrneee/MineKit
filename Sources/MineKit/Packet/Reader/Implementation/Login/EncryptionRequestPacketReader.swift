@@ -12,7 +12,7 @@ class EncryptionRequestPacketReader : PacketReader {
     
     func toPacket(from buffer: inout WrappedBuffer) throws -> Packet {
         // The encryption request packet contains a string of length 20 which appears to be empty
-        let _ = try buffer.readString()
+        let _ = try buffer.readString(ofLength: 20)
 
         guard let publicKey = try buffer.readBytesPrefixedWithLength() else {
             throw PacketReaderError.read("Failed to read public key")

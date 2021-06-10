@@ -197,8 +197,12 @@ public struct WrappedBuffer {
         return byte == 0x01
     }
     
-    public mutating func readString() throws -> String? {
-        let length = try self.readVarInt()
-        return self.buffer.readString(length: length)
+    public mutating func readString(ofLength expectedLength: Int) throws -> String? {
+        let parsedLength = try self.readVarInt()
+        if (parsedLength > expectedLength * 4) {
+            throw WrappedBufferError.read("Expected string to have length of \(expectedLength * 4) but got length of \(parsedLength)")
+        }
+        
+        return self.buffer.readString(length: parsedLength)
     }
 }
