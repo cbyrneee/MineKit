@@ -4,19 +4,16 @@ import Logging
 
 @testable import MineKit
 
-class ChannelHandler : ChannelInboundHandler {
-    typealias InboundIn = Packet
+class ChannelHandler : ConnectionChannelHandler {
     let connection: ServerConnection
-    
     init(with connection: ServerConnection) {
         self.connection = connection
     }
     
-    public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
-        let packet = self.unwrapInboundIn(data)
+    override func on(packet: Packet, context: ChannelHandlerContext) {
         if let packet = packet as? StatusResponsePacket {
             print("S -> C: \(packet) - \(packet.json)")
-            connection.channel?.close(mode: .all, promise: nil)
+            context.channel.close(mode: .all, promise: nil)
         }
     }
 }
