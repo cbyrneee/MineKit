@@ -12,9 +12,9 @@ import Logging
 /// Converts a ByteBuffer instance to a Packet instance
 class ByteBufferToPacketDecoder : ByteToMessageDecoder {
     private let logger = Logger(label: "MineKit.ByteBufferToPacketDecoder")
+    private let handler = PacketReaderHandler()
 
     typealias InboundOut = Packet
-    private let handler = PacketReaderHandler()
     
     func decode(context: ChannelHandlerContext, buffer: inout ByteBuffer) throws -> DecodingState {
         let startingReaderIndex = buffer.readerIndex

@@ -26,12 +26,12 @@ class InboundHandler : ChannelInboundHandler {
     public func channelActive(context: ChannelHandlerContext) {
         logger.info("Client connected to server")
         
-        context.writeAndFlush(NIOAny(HandshakePacket(using: self.serverDetails)), promise: nil)
+        context.writeAndFlush(NIOAny(HandshakePacket(using: self.serverDetails, state: self.connectionState)), promise: nil)
         
-        if (connectionState == .status) {
+        if (self.connectionState == .status) {
             context.writeAndFlush(NIOAny(StatusRequestPacket()), promise: nil)
-        } else if (connectionState == .login) {
-            // TODO: Implement login
+        } else if (self.connectionState == .login) {
+            context.writeAndFlush(NIOAny(LoginStartPacket(username: "test")), promise: nil)
         }
     }
     
